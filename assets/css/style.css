@@ -1,0 +1,50 @@
+.active-cyan-4 input[type=text]:focus:not([readonly]) {
+    border: 1px solid #4dd0e1;
+    box-shadow: 0 0 0 1px #4dd0e1;
+    background-color: white;
+}
+
+.buttonFrame {
+    padding-bottom: 20px;
+    background-color: #666;
+}
+
+body, .mainFrame, .rightRail {
+    min-height: 100vh;
+}
+
+body {
+    background-image: url('../images/connectwork.png');
+}
+
+.buttonFrame {
+    min-height: 60px;
+    border:1px solid #ccc;
+}
+
+.no-margin {
+    margin: 0px !important;
+    padding: 0px !important;
+}
+
+.rounded {
+    text-align:center;
+    font-size:48px;
+    background: white;
+    border:1px solid #ccc;
+}
+
+.rightRail, .mainDiv {
+    padding: 10px !important;
+}
+
+.searchBar, .favorited {
+    padding-top: 10px !important;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    padding-bottom: 10px !important;
+}
+
+.spacer {
+    height: 20px;
+}
