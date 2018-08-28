@@ -4,9 +4,18 @@
     background-color: white;
 }
 
+.hover-cyan-4:hover {
+    border: 2px solid #e91e63;
+    background-color: #fce4ec;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+
 .buttonFrame {
     padding-bottom: 20px;
     background-color: #666;
+    cursor: pointer;
 }
 
 body, .mainFrame, .rightRail {
@@ -48,3 +57,4 @@ body {
 .spacer {
     height: 20px;
 }
+
