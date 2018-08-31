@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Page Title</title>
+    <title>Bun Giphy</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
         <!--Import Google Icon Font-->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -11,19 +11,23 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
         <!-- MY CSS -->
         <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css" />
+        <!-- Pirata One font-->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans|Pirata+One" rel="stylesheet">
+        <!-- Open Sans font-->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 </head>
 <body>
-    <div class="buttonFrame white">
-        
+    <div class="buttonFrame white no-margin no-padding">
+        <h2 class="element" style="padding-left: 20px;">Gif Pirate Bay</h2>
     </div>
     <div class="mainFrame row">
         <div class="mainDiv col l9 m12 s12">
             <!-- mainframe: spacer -->
             <div class="spacer col s12"></div>
             <!-- mainframe: header -->
-            <div class="searchBar rounded col s12">
-                <h6 style="margin-top: 0px !important;margin-bottom: 10px !important">Search Results: </h6>
-                <a class="favoriteButton"></a>
+            <div class="resultsBar rounded col s12">
+                <h6 style="margin-top: 20px !important;margin-bottom: 10px !important">Search Results: </h6>
+                <a class="favoriteButton tooltipped" data-position="top" data-tooltip="Click to Add or Remove Favorites"></a>
                 <h5 class="searchString" style="font-weight: 900;display: inline;"></h5>
             </div>
             <!-- mainframe: spacer -->

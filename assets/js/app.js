@@ -2,6 +2,7 @@ const apikey = 'Ed6piFHJMlGrBHXtEj8H2dtxt0RAZDfw'
 let words = []
 let offset = 0
 let favoritedSearchArr = []
+let favoritedGifArr = []
 
 
 function searchGiphy(searchStr, isAppending) {
@@ -40,20 +41,20 @@ function searchGiphy(searchStr, isAppending) {
                 <div class="col l4 m6 s12">
                     <div class="card">
                         <div class="card-image waves-effect waves-block waves-light">
-                            <img class="gifCard" src='${item.images.original_still.url}'>
+                            <img class="gifCard" data-title='${item.title}' src='${item.images.original_still.url}'>
                             <span class="card-title">Rating: ${item.rating}</span>
                             <span class="card-title playstop" style="top: 0 !important;"><i class="center large material-icons orange-text no-margin valign-wrapper center" href="#">play_arrow</i></span>
                         </div>
                         <div class="card-action center row valign-wrapper">
                             <div id="spacer1" class="valign-wrapper no-margin  col s12"></div>
-                            <div id="left1" class="valign-wrapper no-margin  col s12">
+                            <div id="favoriteGif" class="valign-wrapper no-margin  col s12">
                                 <i class=" small material-icons orange-text no-margin" href="#">add</i>
                                 <a class=" favoritegif no-margin" href="#">Favorite</a>
                             </div>
                             <div id="spacer1" class="valign-wrapper no-margin  col s12"></div>
-                            <div id="right1" class="valign-wrapper  no-margin  col s12">
+                            <div id="downloadGif" class="valign-wrapper  no-margin  col s12">
                                 <i class="small material-icons orange-text no-margin" href="#">vertical_align_bottom</i>
-                                <a class="download no-margin" href="#">Download</a>
+                                <a class="download no-margin" href="${item.images.original_mp4.mp4}" target="_blank" download>Download</a>
                             </div>
                             <div id="spacer1" class="valign-wrapper no-margin  col s12"></div>
                         </div>
@@ -63,7 +64,7 @@ function searchGiphy(searchStr, isAppending) {
         })
 
         $('.gifSection').append(`
-            <div class="viewMore hover-cyan-4 rounded col s12">
+            <div class="viewMore waves-effect waves-light hover-cyan-4 rounded col s12">
                 <h5 class="viewMoreText" style="font-weight: 900;">View More </h5>
             </div>
         `)
@@ -91,7 +92,7 @@ $(document).ready(function() {
     $(document).on("click", ".favoriteButton", function(){
         let queryStr = $('.searchString').html()
 
-        if(favoritedSearchArr.indexOf(queryStr) > -1){
+        if(favoritedGifArr.indexOf(queryStr) > -1){
             var index = favoritedSearchArr.indexOf(queryStr);
             if (index > -1) {
                 favoritedSearchArr.splice(index, 1);
@@ -106,7 +107,7 @@ $(document).ready(function() {
             $(selStr).remove()
 
         }else{
-            favoritedSearchArr.push(queryStr)
+            favoritedGifArr.push(queryStr)
 
             $('.favoriteButton').empty()
             $('.favoriteButton').append(`
@@ -139,6 +140,21 @@ $(document).ready(function() {
         }
     })
 
+    $(document).on("click", ".favoritedGifButton", function(){
+        let favoritedGifStr = $(this).parent().children('h6').html()
+        let queryStr = $('.searchString').html()
+
+        var index = favoritedGifArr.indexOf(favoritedGifStr);
+        favoritedGifArr.splice(index, 1);
+        
+        $(this).parent().remove()
+        if(favoritedGifArr.length === 0){
+            $('.viewAllGifsSection').remove()
+        }
+
+
+    })
+
     $(document).on("click",".card-image",function() {
         let gif = $(this).children('.gifCard').attr('src')
         let newGif = ''
@@ -161,5 +177,37 @@ $(document).ready(function() {
         }
         $(this).children('.gifCard').attr("src", newGif)
     })
+
+    $(document).on("click", "#favoriteGif", function() {
+        if(favoritedGifArr.length === 0){
+            $('.favoritedGifs').append(`
+            <div class="col s12 left viewAllGifsSection">
+                <span class="viewAllGifButton btn halfway-fab waves-effect waves-light viewAllGifsBtn"><i class="material-icons">apps</i></span>
+                <h6 class="viewAllGifsLink pointer">View All Gifs</h6>
+            </div>
+        `)
+        }
+
+        let gifSel = $(this).parent().parent().children('.card-image').children('.gifCard')
+        let gif = $(gifSel).attr('src')
+        let gifTitle = $(gifSel).attr('data-title')
+
+        if(gif.includes('giphy_s.gif')){
+            gif = gif.replace("giphy.gif", "giphy_s.gif")
+        }
+
+        favoritedGifArr.push(gifTitle)
+
+        $('.favoritedGifs').append(`
+            <div class="col s12 left" favorited-data="${gif}">
+                <span class="favoritedGifButton btn halfway-fab waves-effect waves-light red"><i class="material-icons">clear</i></span>
+                <h6 class="favoritedGifText">${gifTitle}</h6>
+            </div>
+        `)
+
+
+    })
+
+    $('.tooltipped').tooltip();
     
 }) //document ready end
