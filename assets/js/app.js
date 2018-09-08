@@ -1,3 +1,5 @@
+
+
 const apikey = 'Ed6piFHJMlGrBHXtEj8H2dtxt0RAZDfw'
 let words = []
 let offset = 0
@@ -148,10 +150,20 @@ function loadSavedSearches(){
 
 
 $(document).ready(function() {
+
     //init() should of been here
     loadSavedSearches()
     searchGiphy('boku no hero', false)
 
+    $(document).on("keypress", "#search_text", function(e) {
+        if(e.which == 13) {
+            favoritedGifFlag = false
+            let queryStr = $('#search_text').val()
+            console.log(queryStr)
+            searchGiphy(queryStr, false)
+        }
+    })
+    
     //click on search button on right rail
     $(document).on("click", ".searchButton", function(){
         favoritedGifFlag = false
