@@ -49,21 +49,23 @@
     cursor: pointer;
 }
 
-.viewAllGifs {
-    font-weight: 700;
-    color: #4a148c;
-}
 
-.viewAllGifs:hover {
-    color: #d500f9;
-}
-
-.viewAllGifsBtn {
+.viewAllGifsBtn, .fav {
     background-color: #4a148c;
+    color: white;
 }
 
-.viewAllGifsBtn:hover {
-    background-color: #d500f9;
+.fav:hover {
+    background-color: #4a148c !important;
+}
+
+.viewAllGifsBtnhover {
+    background-color: #d500f9 !important;
+}
+
+.viewAllGifsLinkhover {
+    font-weight: 700;
+    color: #d500f9;
 }
 
 .resultsBar {
@@ -77,13 +79,17 @@
 }
 
 .favoritedText:hover {
-    color: #ab47bc;
+    color: #d500f9;
     font-weight: 700;
 }
 
 .buttonFrame {
     padding-bottom: 20px;
     background-color: #666;
+    cursor: pointer;
+}
+
+.favoritedText {
     cursor: pointer;
 }
 

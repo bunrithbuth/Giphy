@@ -3,6 +3,7 @@ let words = []
 let offset = 0
 let favoritedSearchArr = []
 let favoritedGifArr = []
+let favoritedGifFlag = false
 
 
 function searchGiphy(searchStr, isAppending) {
@@ -41,7 +42,7 @@ function searchGiphy(searchStr, isAppending) {
                 <div class="col l4 m6 s12">
                     <div class="card">
                         <div class="card-image waves-effect waves-block waves-light">
-                            <img class="gifCard" data-title='${item.title}' src='${item.images.original_still.url}'>
+                            <img class="gifCard" data-title='${item.title}' data-rating='${item.rating}' src='${item.images.original_still.url}'>
                             <span class="card-title">Rating: ${item.rating}</span>
                             <span class="card-title playstop" style="top: 0 !important;"><i class="center large material-icons orange-text no-margin valign-wrapper center" href="#">play_arrow</i></span>
                         </div>
@@ -74,44 +75,37 @@ function searchGiphy(searchStr, isAppending) {
     })
 }
 
-$(document).ready(function() {
-    searchGiphy('boku no hero')
-
-    $(document).on("click", ".searchButton", function(){
-        let queryStr = $('#search_text').val()
-        console.log(queryStr)
-        searchGiphy(queryStr, false)
-    })
-
-    $(document).on("click", ".viewMore", function(){
-        let queryStr = $('.searchString').html()
-        console.log(queryStr)
-        searchGiphy(queryStr, true)
-    })
-
-    $(document).on("click", ".favoriteButton", function(){
-        let queryStr = $('.searchString').html()
-
-        if(favoritedGifArr.indexOf(queryStr) > -1){
+function saveSearch(){
+    let queryStr = $('.searchString').html()
+    if(favoritedGifFlag === false){
+        if(favoritedSearchArr.indexOf(queryStr) > -1){ //keyword found favorited searched
             var index = favoritedSearchArr.indexOf(queryStr);
             if (index > -1) {
                 favoritedSearchArr.splice(index, 1);
+
+                //local storage
+                event.preventDefault();
+                localStorage.setItem('savedsearch', favoritedSearchArr)
             }
 
             $('.favoriteButton').empty()
             $('.favoriteButton').append(`
-                <span class="btn halfway-fab waves-effect waves-light green"><i class="material-icons">add</i></span>
+                <span class="btn halfway-fab waves-effect waves-light green tooltipped" data-tooltip="Click to Add Favorite Searches"><i class="material-icons">add</i></span>
             `)
 
             let selStr = $(document).find(`div[favorited-data='${queryStr}']`)
             $(selStr).remove()
 
-        }else{
-            favoritedGifArr.push(queryStr)
+        }else{ //keyword not in favorited search
+            favoritedSearchArr.push(queryStr)
+
+            //local storage
+            event.preventDefault();
+            localStorage.setItem('savedsearch', favoritedSearchArr)
 
             $('.favoriteButton').empty()
             $('.favoriteButton').append(`
-                <span class="btn halfway-fab waves-effect waves-light red"><i class="material-icons">clear</i></span>
+                <span class="btn halfway-fab waves-effect waves-light red tooltipped" data-tooltip="Click to Remove from Favorites Searches"><i class="material-icons">clear</i></span>
             `)
 
             $('.favoritedSearches').append(`
@@ -122,14 +116,73 @@ $(document).ready(function() {
             `)
 
         }
+    }
+}
+
+function loadSavedSearches(){
+    console.log("loading saved searches from local storage")
+    //set saved localstorage to favoritedSearchArr
+    if(localStorage.getItem('savedsearch')){
+        favoritedSearchArr = localStorage.getItem('savedsearch').split(',')
+        console.log(favoritedSearchArr)
+        favoritedSearchArr.forEach(function(item){
+            $('.favoritedSearches').append(`
+                <div class="col s12 left" favorited-data="${item}">
+                    <span class="favoritedButton btn halfway-fab waves-effect waves-light red"><i class="material-icons">clear</i></span>
+                    <h6 class="favoritedText">${item}</h6>
+                </div>
+            `)
+        })
+    }
+
+    let queryStr = $('.searchString').html()
+    if(favoritedSearchArr.indexOf(queryStr) > -1){
+        $('.favoriteButton').empty()
+        $('.favoriteButton').append(`
+            <span class="btn halfway-fab waves-effect waves-light red tooltipped" data-tooltip="Click to Remove from Favorites Searches"><i class="material-icons">clear</i></span>
+        `)
+    }
+}
+
+// document ready ///////////////////////
+
+
+$(document).ready(function() {
+    //init() should of been here
+    loadSavedSearches()
+    searchGiphy('boku no hero', false)
+
+    //click on search button on right rail
+    $(document).on("click", ".searchButton", function(){
+        favoritedGifFlag = false
+        let queryStr = $('#search_text').val()
+        console.log(queryStr)
+        searchGiphy(queryStr, false)
     })
 
+    //click view more at the end of gif listings
+    $(document).on("click", ".viewMore", function(){
+        let queryStr = $('.searchString').html()
+        console.log(queryStr)
+        searchGiphy(queryStr, true)
+    })
+
+    //click on fav search results button
+    $(document).on("click", ".favoriteButton", function(){
+        saveSearch()
+    })
+
+    //click on favorite search remove button
     $(document).on("click", ".favoritedButton", function(){
         let favoritedStr = $(this).parent().children('h6').html()
         let queryStr = $('.searchString').html()
 
         var index = favoritedSearchArr.indexOf(favoritedStr);
         favoritedSearchArr.splice(index, 1);
+
+        //local storage
+        event.preventDefault();
+        localStorage.setItem('savedsearch', favoritedSearchArr)
         
         $(this).parent().remove()
         if(favoritedStr === queryStr){
@@ -140,9 +193,10 @@ $(document).ready(function() {
         }
     })
 
+    //click on favorited gif remove button
     $(document).on("click", ".favoritedGifButton", function(){
-        let favoritedGifStr = $(this).parent().children('h6').html()
-        let queryStr = $('.searchString').html()
+        console.log("removing a favorited gif")
+        let favoritedGifStr = $(this).parent().attr('favorited-data')
 
         var index = favoritedGifArr.indexOf(favoritedGifStr);
         favoritedGifArr.splice(index, 1);
@@ -155,6 +209,7 @@ $(document).ready(function() {
 
     })
 
+    //click gif card image to play or pause
     $(document).on("click",".card-image",function() {
         let gif = $(this).children('.gifCard').attr('src')
         let newGif = ''
@@ -178,12 +233,13 @@ $(document).ready(function() {
         $(this).children('.gifCard').attr("src", newGif)
     })
 
+    //click on favorite link under gif card
     $(document).on("click", "#favoriteGif", function() {
         if(favoritedGifArr.length === 0){
             $('.favoritedGifs').append(`
             <div class="col s12 left viewAllGifsSection">
                 <span class="viewAllGifButton btn halfway-fab waves-effect waves-light viewAllGifsBtn"><i class="material-icons">apps</i></span>
-                <h6 class="viewAllGifsLink pointer">View All Gifs</h6>
+                <h6 class="viewAllGifsLink pointer">View All Favorited Gifs</h6>
             </div>
         `)
         }
@@ -191,23 +247,104 @@ $(document).ready(function() {
         let gifSel = $(this).parent().parent().children('.card-image').children('.gifCard')
         let gif = $(gifSel).attr('src')
         let gifTitle = $(gifSel).attr('data-title')
+        let gifRating = $(gifSel).attr('data-rating')
 
         if(gif.includes('giphy_s.gif')){
             gif = gif.replace("giphy.gif", "giphy_s.gif")
         }
 
-        favoritedGifArr.push(gifTitle)
+        //do not need to push, would do local storage here! if user refreshes the page and init
+        favoritedGifArr.push(gif)
 
         $('.favoritedGifs').append(`
-            <div class="col s12 left" favorited-data="${gif}">
+            <div class="col s12 left favoritedGifItem" favorited-data="${gif}" title="$${gifTitle}" rating="${gifRating}">
                 <span class="favoritedGifButton btn halfway-fab waves-effect waves-light red"><i class="material-icons">clear</i></span>
                 <h6 class="favoritedGifText">${gifTitle}</h6>
             </div>
         `)
+    })
 
+    // view all favorited gifs
+    $(document).on("click", ".viewAllGifsSection", function() {
+        let sel = $(`.favoritedGifItem:eq(${1})`)
+        console.log(`.favoritedGifItem:eq(${1})`)
+        console.log($(sel))
+    })
+
+    //click on favorited search link
+    $(document).on("click", ".favoritedText", function() {
+        favoritedGifFlag = false
+        let queryStr = $(this).text()
+        console.log(queryStr)
+        searchGiphy(queryStr, false)
+    })
+
+    //View all gifs button and link hover
+    $(document).on("mouseover", ".viewAllGifsLink, .viewAllGifButton", function () {
+        $('.viewAllGifButton').addClass('viewAllGifsBtnhover')
+        $( '.viewAllGifsLink').addClass('viewAllGifsLinkhover')
+    })
+
+    $(document).on("mouseleave", ".viewAllGifsLink, .viewAllGifButton", function () {
+        $('.viewAllGifButton').removeClass('viewAllGifsBtnhover')
+        $('.viewAllGifsLink').removeClass('viewAllGifsLinkhover')
+    })
+
+    //View all gifs button and link click
+    $(document).on("click", ".viewAllGifsLink, .viewAllGifButton", function () {
+        let numFavGifs = $('.favoritedGifItem').length
+        $('.gifSection').empty()
+        $('.favoriteButton').empty()
+        $('.favoriteButton').append(`
+            <span class="btn halfway-fab waves-effect waves-light fav">
+                <i class="material-icons">apps</i>
+            </span>
+        `)
+        $('.searchString').html('Favorited Gifs')
+        
+        for(i = 0; i < numFavGifs; i++){
+            favoritedGifFlag = true
+            let urlGif = $('.favoritedGifItem').eq(i).attr('favorited-data')
+            let urlTitle = $('.favoritedGifItem').eq(i).attr('title')
+            let urlRating = $('.favoritedGifItem').eq(i).attr('rating')
+            let urlMP4 = urlGif.replace("giphy_s.gif", "giphy.mp4")
+
+
+            $('.gifSection').append(`
+                <div class="col l4 m6 s12">
+                    <div class="card">
+                        <div class="card-image waves-effect waves-block waves-light">
+                            <img class="gifCard" data-title='${urlTitle}' data-rating='${urlRating}' src='${urlGif}'>
+                            <span class="card-title">Rating: ${urlRating}</span>
+                            <span class="card-title playstop" style="top: 0 !important;"><i class="center large material-icons orange-text no-margin valign-wrapper center" href="#">play_arrow</i></span>
+                        </div>
+                        <div class="card-action center row valign-wrapper">
+                        <div id="spacer1" class="valign-wrapper no-margin  col s12"></div>
+                        <div id="remFavoriteGif" class="valign-wrapper no-margin  col s12">
+                            <i class=" small material-icons orange-text no-margin" href="#">block</i>
+                            <a class=" remFavoriteLink no-margin" href="#">Remove Favorite</a>
+                        </div>
+                        <div id="spacer1" class="valign-wrapper no-margin  col s12"></div>
+                        <div id="downloadGif" class="valign-wrapper  no-margin  col s12">
+                            <i class="small material-icons orange-text no-margin" href="#">vertical_align_bottom</i>
+                            <a class="download no-margin" href="${urlMP4}" target="_blank" download>Download</a>
+                        </div>
+                        <div id="spacer1" class="valign-wrapper no-margin  col s12"></div>
+                        </div>
+                    </div>
+                </div>
+            `)
+        }
+    })
+
+
+    $(document).on("click", "#remFavoriteGif", function () {
+        console.log('removing favorite...')
+        console.log(favoritedGifArr)
 
     })
 
+    //runs tool tips on page
     $('.tooltipped').tooltip();
-    
+
 }) //document ready end
