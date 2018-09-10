@@ -30,7 +30,7 @@ function searchGiphy(searchStr, isAppending) {
     }
     $('.searchString').text(searchStr)
     searchStr = searchStr.replace(/ /g, '+');
-    let queryURL = 'http://api.giphy.com/v1/gifs/search?q=' + searchStr + '&api_key=' + apikey + '&limit=10' + '&offset=' + offset
+    let queryURL = '//api.giphy.com/v1/gifs/search?q=' + searchStr + '&api_key=' + apikey + '&limit=10' + '&offset=' + offset
     $.ajax({
         url: queryURL,
         method: "GET"
