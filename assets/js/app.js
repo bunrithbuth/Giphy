@@ -195,6 +195,10 @@ $(document).ready(function() {
     loadFavoriteGifs()
     searchGiphy('boku no hero', false)
 
+    $(document).on("click",".element", function(){
+        searchGiphy('boku no hero', false)
+    })
+
     $(document).on("keypress", "#search_text", function(e) {
         if(e.which == 13) {
             favoritedGifFlag = false
