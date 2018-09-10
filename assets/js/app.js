@@ -41,31 +41,57 @@ function searchGiphy(searchStr, isAppending) {
 
         response.data.forEach( item => {
             console.log(item.images.preview_gif.url)
-            // background-image:url('${item.images.original.url}'); background-size:cover;background-position:center;
-            $('.gifSection').append(`
-                <div class="col l4 m6 s12">
-                    <div class="card">
-                        <div class="card-image waves-effect waves-block waves-light">
-                            <img class="gifCard" data-title='${item.title}' data-rating='${item.rating}' src='${item.images.original_still.url}'>
-                            <span class="card-title">Rating: ${item.rating}</span>
-                            <span class="card-title playstop" style="top: 0 !important;"><i class="center large material-icons orange-text no-margin valign-wrapper center" href="#">play_arrow</i></span>
-                        </div>
-                        <div class="card-action center row valign-wrapper">
-                            <div id="spacer1" class="valign-wrapper no-margin  col s12"></div>
-                            <div id="favoriteGif" class="valign-wrapper no-margin  col s12">
-                                <i class=" small material-icons orange-text no-margin" href="#">add</i>
-                                <a class=" favoritegif no-margin" href="#">Favorite</a>
+            if(favoritedGifArr.indexOf(item.images.original_still.url) > -1){ //SEARCHED GIF IS A FAVORITED MEANING WE NEED TO ADD UNFAVORITE BUTTON
+                $('.gifSection').append(`
+                    <div class="col l4 m6 s12">
+                        <div class="card">
+                            <div class="card-image waves-effect waves-block waves-light">
+                                <img class="gifCard" data-title='${item.title}' data-rating='${item.rating}' src='${item.images.original_still.url}'>
+                                <span class="card-title">Rating: ${item.rating}</span>
+                                <span class="card-title playstop" style="top: 0 !important;"><i class="center large material-icons orange-text no-margin valign-wrapper center" href="#">play_arrow</i></span>
                             </div>
-                            <div id="spacer1" class="valign-wrapper no-margin  col s12"></div>
-                            <div id="downloadGif" class="valign-wrapper  no-margin  col s12">
-                                <i class="small material-icons orange-text no-margin" href="#">vertical_align_bottom</i>
-                                <a class="download no-margin" href="${item.images.original_mp4.mp4}" target="_blank" download>Download</a>
+                            <div class="card-action center row valign-wrapper">
+                                <div id="spacer1" class="valign-wrapper no-margin  col s12"></div>
+                                <div id="remFavGifFromSearchResults" class="valign-wrapper no-margin  col s12">
+                                    <i class=" small material-icons orange-text no-margin" href="#">block</i>
+                                    <a class=" remFavoriteLink no-margin" href="#">Unfavorite</a>
+                                </div>
+                                <div id="spacer1" class="valign-wrapper no-margin  col s12"></div>
+                                <div id="downloadGif" class="valign-wrapper  no-margin  col s12">
+                                    <i class="small material-icons orange-text no-margin" href="#">vertical_align_bottom</i>
+                                    <a class="download no-margin" href="${item.images.original_mp4.mp4}" target="_blank" download>Download</a>
+                                </div>
+                                <div id="spacer1" class="valign-wrapper no-margin  col s12"></div>
                             </div>
-                            <div id="spacer1" class="valign-wrapper no-margin  col s12"></div>
                         </div>
                     </div>
-                </div>
-            `)
+                `)
+            }else{
+                $('.gifSection').append(`
+                    <div class="col l4 m6 s12">
+                        <div class="card">
+                            <div class="card-image waves-effect waves-block waves-light">
+                                <img class="gifCard" data-title='${item.title}' data-rating='${item.rating}' src='${item.images.original_still.url}'>
+                                <span class="card-title">Rating: ${item.rating}</span>
+                                <span class="card-title playstop" style="top: 0 !important;"><i class="center large material-icons orange-text no-margin valign-wrapper center" href="#">play_arrow</i></span>
+                            </div>
+                            <div class="card-action center row valign-wrapper">
+                                <div id="spacer1" class="valign-wrapper no-margin  col s12"></div>
+                                <div id="favoriteGif" class="valign-wrapper no-margin  col s12">
+                                    <i class=" small material-icons orange-text no-margin" href="#">add</i>
+                                    <a class=" favoritegif no-margin" href="#">Favorite</a>
+                                </div>
+                                <div id="spacer1" class="valign-wrapper no-margin  col s12"></div>
+                                <div id="downloadGif" class="valign-wrapper  no-margin  col s12">
+                                    <i class="small material-icons orange-text no-margin" href="#">vertical_align_bottom</i>
+                                    <a class="download no-margin" href="${item.images.original_mp4.mp4}" target="_blank" download>Download</a>
+                                </div>
+                                <div id="spacer1" class="valign-wrapper no-margin  col s12"></div>
+                            </div>
+                        </div>
+                    </div>
+                `)
+            }
         })
 
         $('.gifSection').append(`
@@ -326,6 +352,13 @@ $(document).ready(function() {
                 <h6 class="favoritedGifText">${gifTitle}</h6>
             </div>
         `)
+
+        $(this).replaceWith(`
+            <div id="remFavGifFromSearchResults" class="valign-wrapper no-margin  col s12">
+                <i class=" small material-icons orange-text no-margin" href="#">block</i>
+                <a class=" remFavoriteLink no-margin" href="#">Unfavorite</a>
+            </div>
+        `)
     })
 
     //click on favorited search link
@@ -379,7 +412,7 @@ $(document).ready(function() {
                         <div id="spacer1" class="valign-wrapper no-margin  col s12"></div>
                         <div id="remFavoriteGif" class="valign-wrapper no-margin  col s12">
                             <i class=" small material-icons orange-text no-margin" href="#">block</i>
-                            <a class=" remFavoriteLink no-margin" href="#">Remove Favorite</a>
+                            <a class=" remFavoriteLink no-margin" href="#">Unfavorite</a>
                         </div>
                         <div id="spacer1" class="valign-wrapper no-margin  col s12"></div>
                         <div id="downloadGif" class="valign-wrapper  no-margin  col s12">
@@ -426,6 +459,45 @@ $(document).ready(function() {
             $('.viewAllGifsSection').remove()
         }
 
+    })
+
+    $(document).on("click", "#remFavGifFromSearchResults", function () {
+        console.log('removing favorite...')
+        console.log(favoritedGifArr)
+
+
+        let gifSel = $(this).parent().parent().children('.card-image').children('.gifCard')
+        let gif = $(gifSel).attr('src')
+        let gifTitle = $(gifSel).attr('data-title')
+        let gifRating = $(gifSel).attr('data-rating')
+
+        console.log('gif: ' + gif)
+        
+        var index = favoritedGifArr.indexOf(gif)
+        favoritedGifArr.splice(index, 1)
+        favoritedGifTitleArr.splice(index, 1)
+        favoritedGifRatingArr.splice(index, 1)
+
+        localStorage.setItem('savedgifurl', favoritedGifArr)
+        localStorage.setItem('savedgiftitle', favoritedGifTitleArr)
+        localStorage.setItem('savedgifrating', favoritedGifRatingArr)
+
+        let selStr = $(document).find(`div[favorited-data='${gif}']`)
+        $(selStr).remove()
+
+        //do not do this on search results. only on viewing all favs
+        //$(this).parent().parent().remove() //remove from favorite gif results
+
+        if(favoritedGifArr.length === 0){
+            $('.viewAllGifsSection').remove()
+        }
+
+        $(this).replaceWith(`
+            <div id="favoriteGif" class="valign-wrapper no-margin  col s12">
+                <i class=" small material-icons orange-text no-margin" href="#">add</i>
+                <a class=" favoritegif no-margin" href="#">Favorite</a>
+            </div>
+        `)
     })
 
     //runs tool tips on page
